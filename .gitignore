@@ -1,0 +1,11 @@
+*.o
+*.so
+*.dll
+*.tags
+*.gitinfo
+*.exe
+.vscode
+tool/
+obj/
+release/*
+libversion.h
