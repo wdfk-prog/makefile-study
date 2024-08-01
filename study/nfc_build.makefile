@@ -14,7 +14,7 @@ obj  = $(patsubst %.c, obj/%.o, $(notdir $(src)))
 obj1 = $(patsubst %.c, obj/%.o, $(notdir $(src1)))
 OBJ_PATH = ./obj
 ASM_PATH = ./asm
-#obj=$(dir:%.c=%.o)
+SIZE_OUTPUT = ./obj/size_output.txt
 
 $(shell if [ ! -d obj ]; then mkdir obj; fi)
 $(shell if [ ! -d asm ]; then mkdir asm; fi)
@@ -28,11 +28,21 @@ $(obj):$(OBJ_PATH)/%.o:%.c
 $(obj1):$(OBJ_PATH)/%.o:../jni/%.c
 	$(CC) $(CFLAGS) $(INCLUDES) -o $(OBJ_PATH)/$*.o -c ../jni/$*.c
 
+# New rule to generate .s files
 .PHONY: asm
 asm: $(src) $(src1)
 	@for file in $^; do \
 		$(CC) $(CFLAGS) $(INCLUDES) -S $$file -o $(ASM_PATH)/$$(basename $$file).s; \
 	done
+
+# New rule to get the size of object files and save to a file
+.PHONY: size
+size: $(obj) $(obj1)
+	@echo "Size of object files:" > $(SIZE_OUTPUT)
+	@for file in $(obj) $(obj1); do \
+		size $$file >> $(SIZE_OUTPUT); \
+	done
+	@echo "Size information saved to $(SIZE_OUTPUT)"
 
 compile:$(TARGET)
 
